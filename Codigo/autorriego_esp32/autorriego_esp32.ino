@@ -1,12 +1,12 @@
-#include <WiFi.h>
-#include <WebServer.h>
+#include <WiFi.h>   // Permite Conectar el ESP32 a una red WiFi
+#include <WebServer.h>  // Permite la creacion de un servidor en el ESP32
 
-// Credenciales WiFi - Deben ser remplasadas
+// Credenciales WiFi - Deben ser remplasadas por las credenciales de la red WiFi a la que se quiere conectar el ESP32
 const char* ssid = "Jhenny";
 const char* password = "camilosanchez11385";
 
 // configuracion de servidor web
-WebServer server(80);
+WebServer server(80); // servidor web en el puerto 80
 
 // Definir pines
 #define SENSOR_PIN_1 34    // Sensor de Humedad 1
@@ -15,7 +15,7 @@ WebServer server(80);
 #define SENSOR_PIN_2 39    // Sensor de Humedad 2
 #define RELAY_PIN_2 26     // Relé 2
 
-// umbrales de humedad
+// umbrales de humedad - Entre mas bajo el valor, mas alta la humedad
 int umbralHumedadSensor1 = 2500;  
 int umbralHumedadSensor2 = 2500;  
 
@@ -25,6 +25,7 @@ int sensorValue2 = 0;
 bool bomba1Estado = false;
 bool bomba2Estado = false;
 
+// Comienza la comunicacion serial y configura los pines
 void setup() {
   Serial.begin(115200);
 
@@ -35,7 +36,7 @@ void setup() {
   pinMode(RELAY_PIN_2, OUTPUT);  
   digitalWrite(RELAY_PIN_2, HIGH);  // Rele empieza apagad
 
-  // Conectarse al WiFi
+  // Conectarse al WiFi con las credenciales proporcionadas
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -47,30 +48,30 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   // Definir la ruta de el servidor
-  server.on("/", handleRoot);
-  server.on("/status", handleStatus);
+  server.on("/", handleRoot); // Define como manejar la ruta raiz
+  server.on("/status", handleStatus); // Define como gestionar la ruta status
   
   // Arranca el servidor
   server.begin();
 }
 
 void loop() {
-  // Gestionar solicitudes de el cliente
+  // Gestionar solicitudes de el cliente - Solicitudes HTTP entrantes
   server.handleClient();
 
   // Lee y procesa el primer sensor
-  sensorValue1 = analogRead(SENSOR_PIN_1);  
+  sensorValue1 = analogRead(SENSOR_PIN_1);  // Lee el valor de la humedad de el primer sensor
   
-  if (sensorValue1 > umbralHumedadSensor1) {  
-    digitalWrite(RELAY_PIN_1, HIGH);  
-    bomba1Estado = true;
+  if (sensorValue1 > umbralHumedadSensor1) {  // Si elvalor de la humedad es mayor que el umbral
+    digitalWrite(RELAY_PIN_1, HIGH);  // Activa la bomba de agua
+    bomba1Estado = true; // Actualiza la variable de estado de la bomba
   } else {                        
     digitalWrite(RELAY_PIN_1, LOW);  
     bomba1Estado = false;
   }
 
   // Lee y procesa el segundo sensor
-  sensorValue2 = analogRead(SENSOR_PIN_2);  
+  sensorValue2 = analogRead(SENSOR_PIN_2);  // Ocurre el primer proceso de elprimer sensor
 
   if (sensorValue2 > umbralHumedadSensor2) {  
     digitalWrite(RELAY_PIN_2, HIGH);  
@@ -84,7 +85,7 @@ void loop() {
 }
 
 // Disenio pagina web
-void handleRoot() {
+void handleRoot() { // Genera una pagina web usando HTML donde se muestra los valores actuales de los sensores y el estado de las bombas de agua
   String html = "<!DOCTYPE html><html><head>"
                 "<meta charset='UTF-8'>"
                 "<title>Sistema de Autorriego con ESP32</title>"
@@ -128,7 +129,7 @@ void handleRoot() {
   server.send(200, "text/html", html);
 }
 
-// JSON status endpoint
+// Manejo de la ruta /status
 void handleStatus() {
   String jsonResponse = "{\"humedad1\":" + String(sensorValue1) + 
                         ",\"humedad2\":" + String(sensorValue2) + 
