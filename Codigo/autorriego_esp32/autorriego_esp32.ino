@@ -1,25 +1,25 @@
 #include <WiFi.h>
 #include <WebServer.h>
 
-// WiFi Credentials - REPLACE WITH YOUR OWN
-const char* ssid = "YOUR_WIFI_SSID";
-const char* password = "YOUR_WIFI_PASSWORD";
+// Credenciales WiFi - Deben ser remplasadas
+const char* ssid = "Jhenny";
+const char* password = "camilosanchez11385";
 
-// Web Server Configuration
+// configuracion de servidor web
 WebServer server(80);
 
-// Pin Definitions
+// Definir pines
 #define SENSOR_PIN_1 34    // Sensor de Humedad 1
 #define RELAY_PIN_1 25     // Relé 1
 
 #define SENSOR_PIN_2 39    // Sensor de Humedad 2
 #define RELAY_PIN_2 26     // Relé 2
 
-// Humidity Thresholds
-int umbral_humedad_sensor_1 = 2500;  
-int umbral_humedad_sensor_2 = 2500;  
+// umbrales de humedad
+int umbralHumedadSensor1 = 2500;  
+int umbralHumedadSensor2 = 2500;  
 
-// Variables to store current sensor states
+// Variables para guardar el estado de los componentes
 int sensorValue1 = 0;
 int sensorValue2 = 0;
 bool bomba1Estado = false;
@@ -28,40 +28,40 @@ bool bomba2Estado = false;
 void setup() {
   Serial.begin(115200);
 
-  // Configure relay pins
+  // Configura pines de el rele
   pinMode(RELAY_PIN_1, OUTPUT);  
-  digitalWrite(RELAY_PIN_1, HIGH);  // Relay initially off
+  digitalWrite(RELAY_PIN_1, HIGH);  // Rele empieza apagado
 
   pinMode(RELAY_PIN_2, OUTPUT);  
-  digitalWrite(RELAY_PIN_2, HIGH);  // Relay initially off
+  digitalWrite(RELAY_PIN_2, HIGH);  // Rele empieza apagad
 
-  // Connect to WiFi
+  // Conectarse al WiFi
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
   Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
+  Serial.println("WiFi conectado");
+  Serial.println("Direccion IP: ");
   Serial.println(WiFi.localIP());
 
-  // Define web server routes
+  // Definir la ruta de el servidor
   server.on("/", handleRoot);
   server.on("/status", handleStatus);
   
-  // Start server
+  // Arranca el servidor
   server.begin();
 }
 
 void loop() {
-  // Handle client requests
+  // Gestionar solicitudes de el cliente
   server.handleClient();
 
-  // Read and process the first sensor
+  // Lee y procesa el primer sensor
   sensorValue1 = analogRead(SENSOR_PIN_1);  
   
-  if (sensorValue1 > umbral_humedad_sensor_1) {  
+  if (sensorValue1 > umbralHumedadSensor1) {  
     digitalWrite(RELAY_PIN_1, HIGH);  
     bomba1Estado = true;
   } else {                        
@@ -69,10 +69,10 @@ void loop() {
     bomba1Estado = false;
   }
 
-  // Read and process the second sensor
+  // Lee y procesa el segundo sensor
   sensorValue2 = analogRead(SENSOR_PIN_2);  
 
-  if (sensorValue2 > umbral_humedad_sensor_2) {  
+  if (sensorValue2 > umbralHumedadSensor2) {  
     digitalWrite(RELAY_PIN_2, HIGH);  
     bomba2Estado = true;
   } else {                        
@@ -83,7 +83,7 @@ void loop() {
   delay(3000);  
 }
 
-// Web page handler for root URL
+// Disenio pagina web
 void handleRoot() {
   String html = "<!DOCTYPE html><html><head>"
                 "<meta charset='UTF-8'>"
@@ -99,11 +99,11 @@ void handleRoot() {
                 "</head><body>"
                 "<h1>Sistema de Autorriego con ESP32</h1>"
                 "<div class='sensor-data'>"
-                "<h2>Planta 1 1</h2>"
+                "<h2>Planta 1</h2>"
                 "<p>Valor de Humedad: <span id='humedad1'>" + String(sensorValue1) + "</span></p>"
                 "<p>Estado de Bomba: <span id='bomba1' class='status-" + (bomba1Estado ? "on'>Encendida" : "off'>Apagada") + "</span></p>"
                 "</div>"
-                "<div class='sensor-data'>"
+                "<div class='datos-sensor'>"
                 "<h2>Planta 2</h2>"
                 "<p>Valor de Humedad: <span id='humedad2'>" + String(sensorValue2) + "</span></p>"
                 "<p>Estado de Bomba: <span id='bomba2' class='status-" + (bomba2Estado ? "on'>Encendida" : "off'>Apagada") + "</span></p>"
