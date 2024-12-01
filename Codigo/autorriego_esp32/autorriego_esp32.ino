@@ -48,8 +48,8 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   // Definir la ruta de el servidor
-  server.on("/", handleRoot); // Define como manejar la ruta raiz
-  server.on("/status", handleStatus); // Define como gestionar la ruta status
+  server.on("/", paginaWeb); // Define como manejar la ruta raiz
+  server.on("/Actualizar", actualizacionInformacion); // Define como gestionar la ruta status
   
   // Arranca el servidor
   server.begin();
@@ -85,7 +85,7 @@ void loop() {
 }
 
 // Disenio pagina web
-void handleRoot() { // Genera una pagina web usando HTML donde se muestra los valores actuales de los sensores y el estado de las bombas de agua
+void paginaWeb() { // Genera una pagina web usando HTML donde se muestra los valores actuales de los sensores y el estado de las bombas de agua
   String html = "<!DOCTYPE html><html><head>"
                 "<meta charset='UTF-8'>"
                 "<title>Sistema de Autorriego con ESP32</title>"
@@ -111,7 +111,7 @@ void handleRoot() { // Genera una pagina web usando HTML donde se muestra los va
                 "</div>"
                 "<script>"
                 "function actualizarDatos() {"
-                "  fetch('/status')"
+                "  fetch('/Actualizar')"
                 "    .then(response => response.json())"
                 "    .then(data => {"
                 "      document.getElementById('humedad1').textContent = data.humedad1;"
@@ -129,8 +129,8 @@ void handleRoot() { // Genera una pagina web usando HTML donde se muestra los va
   server.send(200, "text/html", html);
 }
 
-// Manejo de la ruta /status
-void handleStatus() {
+// Manejo de la ruta /Actualizar
+void actualizacionInformacion() {
   String jsonResponse = "{\"humedad1\":" + String(sensorValue1) + 
                         ",\"humedad2\":" + String(sensorValue2) + 
                         ",\"bomba1Estado\":" + (bomba1Estado ? "true" : "false") + 
