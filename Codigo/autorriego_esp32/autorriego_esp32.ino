@@ -8,7 +8,6 @@ const char* password = "camilosanchez11385";
 // configuracion de servidor web
 WebServer server(80); // servidor web en el puerto 80
 
-
 // Definir pines
 #define SENSOR_PIN_1 34    // Sensor de Humedad 1
 #define RELAY_PIN_1 25     // Relé 1
