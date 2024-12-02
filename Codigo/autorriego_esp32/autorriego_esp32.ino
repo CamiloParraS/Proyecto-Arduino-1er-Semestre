@@ -27,6 +27,7 @@ int porcentajeHumedad2 = 0;
 bool bomba1Estado = false;
 bool bomba2Estado = false;
 
+// constantes para los valores maximos y minimos de humedad
 const int Mojado = 1500; // Valor de los sensores en agua
 const int Seco = 4000; // Valor de los sensores en seco y en un dia soleado
 
