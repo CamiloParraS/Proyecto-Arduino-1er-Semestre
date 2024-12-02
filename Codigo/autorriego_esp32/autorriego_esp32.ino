@@ -22,8 +22,8 @@ int umbralHumedadSensor2 = 2500;
 // Variables para guardar el estado de los componentes
 int sensorValue1 = 0;
 int sensorValue2 = 0;
-int humedadp1 = 0;
-int humedadp2 = 0;
+int porcentajeHumedad1 = 0;
+int porcentajeHumedad2 = 0;
 bool bomba1Estado = false;
 bool bomba2Estado = false;
 
@@ -66,7 +66,7 @@ void loop() {
 
   // Lee y procesa el primer sensor
   sensorValue1 = analogRead(SENSOR_PIN_1);  // Lee el valor de la humedad de el primer sensor
-  humedadp1 = map(sensorValue1, Mojado, Seco, 100, 0); // Calcula el porcentaje de que tan Humeda esta la planta 
+  porcentajeHumedad1 = map(sensorValue1, Mojado, Seco, 100, 0); // Calcula el porcentaje de que tan Humeda esta la planta 
   
   if (sensorValue1 > umbralHumedadSensor1) {  // Si elvalor de la humedad es mayor que el umbral
     digitalWrite(RELAY_PIN_1, HIGH);  // Activa la bomba de agua
@@ -78,7 +78,7 @@ void loop() {
 
   // Lee y procesa el segundo sensor
   sensorValue2 = analogRead(SENSOR_PIN_2);  // Ocurre el primer proceso de elprimer sensor
-  humedadp2 = map(sensorValue2, Mojado, Seco, 100, 0);
+  porcentajeHumedad2 = map(sensorValue2, Mojado, Seco, 100, 0);
 
   if (sensorValue2 > umbralHumedadSensor2) {  
     digitalWrite(RELAY_PIN_2, HIGH);  
@@ -109,13 +109,13 @@ void paginaWeb() { // Genera una pagina web usando HTML donde se muestra los val
                 "<div class='datosSensor'>"
                 "<h2>Planta 1</h2>"
                 "<p>Valor de Humedad: <span id='humedad1'>" + String(sensorValue1) + "</span></p>"
-                "<p>Porcentaje de Humedad: <span id='porcentaje1'>" + String(humedadp1) + "%</span></p>"
+                "<p>Porcentaje de Humedad: <span id='porcentaje1'>" + String(porcentajeHumedad1) + "%</span></p>"
                 "<p>Estado de Bomba: <span id='bomba1' class='status-" + (bomba1Estado ? "on'>Encendida" : "off'>Apagada") + "</span></p>"
                 "</div>"
                 "<div class='datosSensor'>"
                 "<h2>Planta 2</h2>"
                 "<p>Valor de Humedad: <span id='humedad2'>" + String(sensorValue2) + "</span></p>"
-                "<p>Porcentaje de Humedad: <span id='porcentaje2'>" + String(humedadp2) + "%</span></p>"
+                "<p>Porcentaje de Humedad: <span id='porcentaje2'>" + String(porcentajeHumedad2) + "%</span></p>"
                 "<p>Estado de Bomba: <span id='bomba2' class='status-" + (bomba2Estado ? "on'>Encendida" : "off'>Apagada") + "</span></p>"
                 "</div>"
                 "<script>"
@@ -143,9 +143,9 @@ void paginaWeb() { // Genera una pagina web usando HTML donde se muestra los val
 // Manejo de la ruta /Actualizar
 void actualizacionInformacion() {
   String jsonResponse = "{\"humedad1\":" + String(sensorValue1) + 
-                        ",\"porcentaje1\":" + String(humedadp1) + 
+                        ",\"porcentaje1\":" + String(porcentajeHumedad1) + 
                         ",\"humedad2\":" + String(sensorValue2) + 
-                        ",\"porcentaje2\":" + String(humedadp2) + 
+                        ",\"porcentaje2\":" + String(porcentajeHumedad2) + 
                         ",\"bomba1Estado\":" + (bomba1Estado ? "true" : "false") + 
                         ",\"bomba2Estado\":" + (bomba2Estado ? "true" : "false") + "}";
   
