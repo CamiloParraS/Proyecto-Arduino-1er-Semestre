@@ -16,14 +16,19 @@ WebServer server(80); // servidor web en el puerto 80
 #define RELAY_PIN_2 26     // Relé 2
 
 // umbrales de humedad - Entre mas bajo el valor, mas alta la humedad
-int umbralHumedadSensor1 = 2500;  
+int umbralHumedadSensor1 = 2500;  // el valor es 2500 debido a que este representa el nivel optimo de humedad en las plantas, el cual ronda entre un 50 y 60 porciento
 int umbralHumedadSensor2 = 2500;  
 
 // Variables para guardar el estado de los componentes
 int sensorValue1 = 0;
 int sensorValue2 = 0;
+int humedadp1 = 0;
+int humedadp2 = 0;
 bool bomba1Estado = false;
 bool bomba2Estado = false;
+
+const int Mojado = 1500; // Valor de los sensores en agua
+const int Seco = 4000; // Valor de los sensores en seco y en un dia soleado
 
 // Comienza la comunicacion serial y configura los pines
 void setup() {
@@ -61,6 +66,7 @@ void loop() {
 
   // Lee y procesa el primer sensor
   sensorValue1 = analogRead(SENSOR_PIN_1);  // Lee el valor de la humedad de el primer sensor
+  humedadp1 = map(sensorValue1, Mojado, Seco, 100, 0); // Calcula el porcentaje de que tan Humeda esta la planta 
   
   if (sensorValue1 > umbralHumedadSensor1) {  // Si elvalor de la humedad es mayor que el umbral
     digitalWrite(RELAY_PIN_1, HIGH);  // Activa la bomba de agua
@@ -72,6 +78,7 @@ void loop() {
 
   // Lee y procesa el segundo sensor
   sensorValue2 = analogRead(SENSOR_PIN_2);  // Ocurre el primer proceso de elprimer sensor
+  humedadp2 = map(sensorValue2, Mojado, Seco, 100, 0);
 
   if (sensorValue2 > umbralHumedadSensor2) {  
     digitalWrite(RELAY_PIN_2, HIGH);  
@@ -102,11 +109,13 @@ void paginaWeb() { // Genera una pagina web usando HTML donde se muestra los val
                 "<div class='datosSensor'>"
                 "<h2>Planta 1</h2>"
                 "<p>Valor de Humedad: <span id='humedad1'>" + String(sensorValue1) + "</span></p>"
+                "<p>Porcentaje de Humedad: <span id='porcentaje1'>" + String(humedadp1) + "%</span></p>"
                 "<p>Estado de Bomba: <span id='bomba1' class='status-" + (bomba1Estado ? "on'>Encendida" : "off'>Apagada") + "</span></p>"
                 "</div>"
                 "<div class='datosSensor'>"
                 "<h2>Planta 2</h2>"
                 "<p>Valor de Humedad: <span id='humedad2'>" + String(sensorValue2) + "</span></p>"
+                "<p>Porcentaje de Humedad: <span id='porcentaje2'>" + String(humedadp2) + "%</span></p>"
                 "<p>Estado de Bomba: <span id='bomba2' class='status-" + (bomba2Estado ? "on'>Encendida" : "off'>Apagada") + "</span></p>"
                 "</div>"
                 "<script>"
@@ -115,7 +124,9 @@ void paginaWeb() { // Genera una pagina web usando HTML donde se muestra los val
                 "    .then(response => response.json())"
                 "    .then(data => {"
                 "      document.getElementById('humedad1').textContent = data.humedad1;"
+                "      document.getElementById('porcentaje1').textContent = data.porcentaje1 + '%';"
                 "      document.getElementById('humedad2').textContent = data.humedad2;"
+                "      document.getElementById('porcentaje2').textContent = data.porcentaje2 + '%';"
                 "      document.getElementById('bomba1').textContent = data.bomba1Estado ? 'Encendida' : 'Apagada';"
                 "      document.getElementById('bomba1').className = 'status-' + (data.bomba1Estado ? 'on' : 'off');"
                 "      document.getElementById('bomba2').textContent = data.bomba2Estado ? 'Encendida' : 'Apagada';"
@@ -132,7 +143,9 @@ void paginaWeb() { // Genera una pagina web usando HTML donde se muestra los val
 // Manejo de la ruta /Actualizar
 void actualizacionInformacion() {
   String jsonResponse = "{\"humedad1\":" + String(sensorValue1) + 
+                        ",\"porcentaje1\":" + String(humedadp1) + 
                         ",\"humedad2\":" + String(sensorValue2) + 
+                        ",\"porcentaje2\":" + String(humedadp2) + 
                         ",\"bomba1Estado\":" + (bomba1Estado ? "true" : "false") + 
                         ",\"bomba2Estado\":" + (bomba2Estado ? "true" : "false") + "}";
   
