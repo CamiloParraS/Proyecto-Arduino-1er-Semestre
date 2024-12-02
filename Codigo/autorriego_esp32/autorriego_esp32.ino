@@ -8,6 +8,7 @@ const char* password = "camilosanchez11385";
 // configuracion de servidor web
 WebServer server(80); // servidor web en el puerto 80
 
+
 // Definir pines
 #define SENSOR_PIN_1 34    // Sensor de Humedad 1
 #define RELAY_PIN_1 25     // Relé 1
@@ -17,7 +18,7 @@ WebServer server(80); // servidor web en el puerto 80
 
 // umbrales de humedad - Entre mas bajo el valor, mas alta la humedad
 int umbralHumedadSensor1 = 2500;  // el valor es 2500 debido a que este representa el nivel optimo de humedad en las plantas, el cual ronda entre un 50 y 60 porciento
-int umbralHumedadSensor2 = 2500;  
+int umbralHumedadSensor2 = 2500;  // se utiliza un umbral diferente debido a si se puede requerir un nivel de humedad diferente para la planta numero 2
 
 // Variables para guardar el estado de los componentes
 int sensorValue1 = 0;
