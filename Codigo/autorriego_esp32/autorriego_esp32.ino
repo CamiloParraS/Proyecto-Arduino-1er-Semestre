@@ -2,8 +2,8 @@
 #include <WebServer.h>  // Permite la creacion de un servidor en el ESP32
 
 // Credenciales WiFi - Deben ser remplasadas por las credenciales de la red WiFi a la que se quiere conectar el ESP32
-const char* ssid = "Jhenny";
-const char* password = "camilosanchez11385";
+const char* ssid = "ElNombredeTuRedWiFi";
+const char* password = "LaContraseniadeTuRedWiFi";
 
 // configuracion de servidor web
 WebServer server(80); // servidor web en el puerto 80
