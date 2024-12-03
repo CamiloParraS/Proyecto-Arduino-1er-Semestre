@@ -55,7 +55,7 @@ void setup() {
 
   // Definir la ruta de el servidor
   server.on("/", paginaWeb); // Define como manejar la ruta raiz
-  server.on("/Actualizar", actualizacionInformacion); // Define como gestionar la ruta status
+  server.on("/Actualizar", actualizacionInformacion); // Define como gestionar la ruta actualizar
   
   // Arranca el servidor
   server.begin();
